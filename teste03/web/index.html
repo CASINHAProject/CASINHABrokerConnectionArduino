@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Controlando leds</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+</head>
+<body>
+
+<h2>Controlando leds</h2>
+
+<p>Led 1: <span id="luz1">aguarde...</span> - <span><button onclick="l1ligar()">Ligar</button><button onclick="l1desligar()">Desligar</button></span></p>
+<p>Led 2: <span id="luz2">aguarde...</span> - <span><button onclick="l2ligar()">Ligar</button><button onclick="l2desligar()">Desligar</button></span></p>
+
+</body>
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+<script src="app.js"></script>
+</html>
