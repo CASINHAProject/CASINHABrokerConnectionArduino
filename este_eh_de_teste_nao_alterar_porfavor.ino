@@ -29,7 +29,7 @@ void setup()
 void mypombs(){
   if (client.connect("897", "sdnlditz", "iyLDGNSrLU4U")) {
     client.publish("outTopic","hello world");
-    client.subscribe("inTopic");
+    
     Serial.print("Conectado");
   }
 }
@@ -41,6 +41,9 @@ void loop()
   if(client.connected()!=true){
     mypombs();
   }
+  client.subscribe("inTopic");
+  client.print();
+  //Serial.print(client);
     //
    
   
