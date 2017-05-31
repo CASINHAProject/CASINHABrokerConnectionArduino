@@ -56,25 +56,28 @@ console.log("onMessageArrived:"+message.destinationName);
 }
 
 function l1ligar(){
-	
+	$("#luz1").html("aguarde...");
 	message1 = new Paho.MQTT.Message("on");
 	message1.destinationName = "luz1";
 	client.send(message1);
 }
 
 function l2ligar(){
+	$("#luz2").html("aguarde...");
 	message1 = new Paho.MQTT.Message("on");
 	message1.destinationName = "luz2";
 	client.send(message1);
 }
 
 function l1desligar(){
+	$("#luz1").html("aguarde...");
 	message1 = new Paho.MQTT.Message("off");
 	message1.destinationName = "luz1";
 	client.send(message1);
 }
 
 function l2desligar(){
+	$("#luz2").html("aguarde...");
 	message1 = new Paho.MQTT.Message("off");
 	message1.destinationName = "luz2";
 	client.send(message1);
