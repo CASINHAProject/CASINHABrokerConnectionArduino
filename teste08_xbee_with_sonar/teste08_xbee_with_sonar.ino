@@ -1,14 +1,21 @@
-
 #include <SPI.h>
 #include <Ethernet.h>
 #include <PubSubClient.h>
+#include <SoftwareSerial.h>
  
 // Update these with values suitable for your network.
 int luz1 = 6;
 int luz2 = 8;
+char *s = {"l"};
+char *c = {"l"};
+
+
+//SoftwareSerial Xbee(0,1);
+
+String confirmation;
 
 byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
-IPAddress ip(192,168,0,115);
+IPAddress ip(192,168,1,122);
 IPAddress server(34,200,51,91); // IP DO BROKER
 
 String a;
@@ -33,6 +40,8 @@ String service(byte* payload, unsigned int length){
   
 }
 
+int con = 0;
+
 char *convert(int key){
   if(key){
     return {"1"};
@@ -42,52 +51,47 @@ char *convert(int key){
 
 void callback(char* topic, byte* payload, unsigned int length) {
   if (strcmp(topic, "luz1") == 0){
-    //Serial.print("Luz 1 ligada");
      if(service(payload, length).equals("1") == true){
-      digitalWrite(luz1, HIGH);
-      mqttClient.publish("r/luz1","1");
+      c = 'l';
+      Serial.println("luz1on");
+      //if(con == 1){
+      //  mqttClient.publish("r/luz1","1");
+      //}
+      
+      con = 0;
     }else if(service(payload, length).equals("0") == true){
-      digitalWrite(luz1, LOW);
-      mqttClient.publish("r/luz1","0");
+      c = 'd';
+      Serial.println("luz1off");
+      //mqttClient.publish("r/luz1","0");
     }else if(service(payload, length).equals("state") == true){
-      mqttClient.publish("r/luz1",convert(digitalRead(luz1)));
-      Serial.println(convert(digitalRead(luz1)));
+      mqttClient.publish("r/luz1",c);
     }
   }else if (strcmp(topic, "luz2") == 0){
-    //Serial.print("Luz 1 ligada");
      if(service(payload, length).equals("1") == true){
-      digitalWrite(luz2, HIGH);
-      mqttClient.publish("r/luz2","1");
+      s = 'l';
+      Serial.println("luz2");
+      //mqttClient.publish("r/luz2","1");
     }else if(service(payload, length).equals("0") == true){
-      digitalWrite(luz2, LOW);
-      mqttClient.publish("r/luz2","0");
+      s = 'l';
+      Serial.println("luz2");
+      //mqttClient.publish("r/luz2","0");
     }else if(service(payload, length).equals("state") == true){
-      mqttClient.publish("r/luz2",convert(digitalRead(luz2)));
-      Serial.println(convert(digitalRead(luz2)));
+      mqttClient.publish("r/luz2",s);
     }
   }
-  Serial.println();
 }
-
-
- 
 
  
 void reconnect() {
   // Loop until we're reconnected
   while (!mqttClient.connected()) {
-    Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (mqttClient.connect("newconnection", "sdnlditz", "iyLDGNSrLU4U")) {
-      Serial.println("connected");
+    if (mqttClient.connect("897", "sdnlditz", "iyLDGNSrLU4U")) {
       // Once connected, publish an announcement...
       //mqttClient.publish("outTopic","hello world");
       // ... and resubscribe
       mqttClient.subscribe("#");
     } else {
-      Serial.print("failed, rc=");
-      Serial.print(mqttClient.state());
-      Serial.println(" try again in 5 seconds");
       // Wait 5 seconds before retrying
       delay(5000);
     }
@@ -113,9 +117,26 @@ void setup()
  
 void loop()
 {
+  confirmation = "";
   if (!mqttClient.connected()) {
     reconnect();
   }
   mqttClient.loop();
-}
+  
+  if(Serial.available()){
+    while(Serial.available()){
+      char a = Serial.read();
+      confirmation += a;
+      delay(10);
+    }
+    //Serial.println(confirmation);
+    if(confirmation.indexOf("r/sonar/") >= 0){
+      Serial.println(confirmation);
+      char copy[50];
+      confirmation.toCharArray(copy, 60);
+      mqttClient.publish("r/sonar", copy);
 
+    }
+    
+  }
+}
